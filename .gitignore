@@ -1,0 +1,16 @@
+
+# Dataset files (exclude the dataset file)
+*.csv
+*.xlsx
+*.json
+*.txt
+
+# Python-specific (if you are using Python for processing)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+# Test directories and coverage
+/coverage/
+/test_results/
