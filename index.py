@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
@@ -29,7 +30,6 @@ def remove_outliers(df, columns, multiplier=1.5):
 
 # Load the dataset
 data = pd.read_csv('Crime Prediction in Chicago_Dataset.csv')
-
 # Show the initial shape and a quick overview
 print("Initial Dataset Shape:", data.shape)
 print(data.head())
@@ -101,16 +101,23 @@ print(data.info())
 #end of pre-processing
 
 
+
 #Logistic regression
 # Selecting x (features) and y (target)
-x = data[['IUCR', 'Primary Type', 'Domestic', 'Beat', 'District', 'Latitude', 'Longitude', 'Month', 'Day', 'Hour', 'Weekday']]
+x = data.loc[:, data.columns != 'Arrest']
 y = data['Arrest']
 
-model = LogisticRegression(solver="liblinear", C=10.0, random_state=0)
-model.fit(x, y)
 
-p_pred = model.predict_proba(x)
-y_pred = model.predict(x)
-score_ = model.score(x, y)
-conf_m = confusion_matrix(y, y_pred)
-report = classification_report(y, y_pred)
+model = LogisticRegression(solver="liblinear",class_weight="balanced", C=10, random_state=0)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
+
+model.fit(x_train, y_train)
+y_pred = model.predict(x_test)
+p_pred = model.predict_proba(x_test)
+score_ = model.score(x_test, y_test)
+conf_m = confusion_matrix(y_test, y_pred)
+report = classification_report(y_test, y_pred)
+
+print(conf_m)
+print(score_)
+print(report)
