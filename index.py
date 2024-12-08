@@ -1,8 +1,12 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.svm import LinearSVC
+from sklearn.tree import DecisionTreeClassifier
+
 
 # Function to remove outliers using IQR
 def remove_outliers(df, columns, multiplier=1.5):
@@ -29,7 +33,9 @@ def remove_outliers(df, columns, multiplier=1.5):
     return df
 
 # Load the dataset
-data = pd.read_csv('Crime Prediction in Chicago_Dataset.csv')
+data = pd.read_csv('CrimePredictioninChicagoDataset.csv')
+
+print("\n_______________________________________________________________\n")
 # Show the initial shape and a quick overview
 print("Initial Dataset Shape:", data.shape)
 print(data.head())
@@ -47,6 +53,8 @@ for col in categorical_columns:
     if col in data.columns:
         data[col] = data[col].fillna('UNKNOWN')
 
+
+print("\n_______________________________________________________________\n")
 # Remove duplicates
 print("Duplicates before:", data.duplicated().sum())
 data = data.drop_duplicates()
@@ -93,6 +101,7 @@ categorical_columns_to_encode = data.select_dtypes(include=['object']).columns
 for col in categorical_columns_to_encode:
     data[col] = label_encoder.fit_transform(data[col])
 
+print("\n_______________________________________________________________\n")
 # Show the final dataset structure
 print("Final Dataset Shape:", data.shape)
 print(data.head())
@@ -118,6 +127,77 @@ score_ = model.score(x_test, y_test)
 conf_m = confusion_matrix(y_test, y_pred)
 report = classification_report(y_test, y_pred)
 
+print("\n_______________________________________________________________\n")
+print("Logistic regression")
 print(conf_m)
 print(score_)
 print(report)
+
+
+print("\n_______________________________________________________________\n")
+##### CLASSIFICATION ALGORITHM DECISION TREE ####
+
+print("\n\t\t\tDECISION TREE MODEL: ")
+
+# Create a decision tree classifier
+clf = DecisionTreeClassifier()
+
+# Train the classifier on the training data
+clf.fit(x_train, y_train)
+
+# Make predictions on the testing data
+y_pred = clf.predict(x_test)
+
+# Metrics for evaluating the model
+print("Metrics for evaluating this model:")
+accuracy = accuracy_score(y_test, y_pred)
+print("\nAccuracy:", accuracy)
+
+report = classification_report(y_test, y_pred)
+print("\nClassification Report:\n", report)
+
+conf_matrix = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix:\n", conf_matrix)
+
+
+print("\n_______________________________________________________________\n")
+##### CLASSIFICATION ALGORITHM KNN ####
+
+print("\n\t\t\tK-NEAREST NEIGHBORS MODEL (KNN): ")
+# Create a K-Nearest Neighbors classifier
+clf2 = KNeighborsClassifier()
+
+# Train the classifier on the training data
+clf2.fit(x_train, y_train)
+
+# Make predictions on the testing data
+y_pred = clf2.predict(x_test)
+
+# Metrics for evaluating the model
+print("Metrics for evaluating the K-Nearest Neighbors (KNN) model:")
+accuracy = accuracy_score(y_test, y_pred)
+print("\nAccuracy:", accuracy)
+
+report = classification_report(y_test, y_pred)
+print("\nClassification Report:\n", report)
+
+conf_matrix = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix:\n", conf_matrix)
+
+
+print("\n_______________________________________________________________\n")
+
+# Initialize the Linear SVM model
+linear_svm_model = LinearSVC(random_state=42, max_iter=10000, class_weight="balanced")
+
+# Train the model
+linear_svm_model.fit(x_train, y_train)
+
+# Make predictions
+y_pred = linear_svm_model.predict(x_test)
+
+# Evaluate the model
+print("Linear SVM Model Evaluation:")
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
