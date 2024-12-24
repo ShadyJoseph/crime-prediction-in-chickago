@@ -15,7 +15,6 @@ from tkinter import ttk, messagebox
 
 original_data = pd.read_csv('Crime Prediction in Chicago_Dataset.csv')
 
-# Specify columns that you want to keep for training
 relevant_columns = ['Year', 'Month', 'Day', 'Day of Week', 'Latitude', 'Longitude', 'Domestic', 'Primary Type',
                     'Location Description', 'Description', 'Beat', 'Arrest']
 
@@ -139,7 +138,7 @@ def train_models():
     logistic_model.fit(X_train, y_train)
 
     # Train Decision Tree
-    decision_tree_model = DecisionTreeClassifier()
+    decision_tree_model = DecisionTreeClassifier(class_weight="balanced", random_state=0)
     decision_tree_model.fit(X_train, y_train)
 
     # Train K-Nearest Neighbors
@@ -147,15 +146,12 @@ def train_models():
     knn_model.fit(X_train, y_train)
 
     # Train Linear SVM
-    svm_model = LinearSVC(random_state=42, max_iter=10000, class_weight="balanced", C=10.0)
+    svm_model = LinearSVC(random_state=0, class_weight="balanced", C=10.0)
     svm_model.fit(X_train, y_train)  # Fit the SVM first
 
-    # # Now calibrate the SVM using CalibratedClassifierCV
-    # svm_model_cal = CalibratedClassifierCV(svm_model, method="sigmoid", cv="prefit")  # Calibrate after fitting
-    # svm_model_cal.fit(X_train, y_train)  # Calibrate (fit) the calibrated model
 
     print("Models trained successfully!")
-    # Now evaluate the models
+    # Evaluate the models
     models = {
         'Logistic Regression': logistic_model,
         'Decision Tree': decision_tree_model,
@@ -163,7 +159,7 @@ def train_models():
         'Linear SVM': svm_model
     }
 
-    # Assuming you have X_test and y_test as your test data
+
     evaluate_models(X_test, y_test, models)
 
 
@@ -236,7 +232,6 @@ def predict_arrest():
 
 
 def fill_sample_data(input_fields):
-    # Example sample data dictionary with fixed values for some fields
     sample_data = {
         'Year': str(2022),
         'Month': str(random.randint(1, 12)),  # Random month
@@ -263,7 +258,6 @@ def fill_sample_data(input_fields):
             elif isinstance(input_field, tk.Entry):
                 input_field.delete(0, tk.END)  # Clear the current value
                 input_field.insert(0, value)  # Insert the sample value
-            # You can extend this to handle other types of widgets if necessary (e.g., Checkboxes)
             else:
                 print(f"Unknown input field type for {feature}")
         else:
