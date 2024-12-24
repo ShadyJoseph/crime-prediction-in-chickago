@@ -1,7 +1,6 @@
 import random
 
 import pandas as pd
-from sklearn.calibration import CalibratedClassifierCV
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder
@@ -138,7 +137,7 @@ def train_models():
     logistic_model.fit(X_train, y_train)
 
     # Train Decision Tree
-    decision_tree_model = DecisionTreeClassifier(class_weight="balanced", random_state=0)
+    decision_tree_model = DecisionTreeClassifier(criterion="entropy", class_weight="balanced", random_state=0)
     decision_tree_model.fit(X_train, y_train)
 
     # Train K-Nearest Neighbors
